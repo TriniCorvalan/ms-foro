@@ -25,11 +25,16 @@ Depende de **[ms-usuarios](https://github.com/TriniCorvalan/ms-usuarios)** para 
 
 ## Configuración
 
-Usa el mismo schema Oracle `FORO_APP` y el mismo wallet que [ms-usuarios](https://github.com/TriniCorvalan/ms-usuarios).
+Comparte el schema Oracle `FORO_APP` y el wallet con [ms-usuarios](https://github.com/TriniCorvalan/ms-usuarios) (tablas `CATEGORIA`, `TEMA`, `COMENTARIO`). El schema se crea aparte; aquí solo se configura la conexión.
 
-```bash
-cp src/main/resources/application.properties.example src/main/resources/application.properties
-```
+1. Wallet en ruta sin espacios, p. ej. `~/oracle_wallets/foro` (mismo symlink que ms-usuarios).
+2. Propiedades locales:
+   ```bash
+   cp src/main/resources/application.properties.example src/main/resources/application.properties
+   ```
+3. `jwt.secret` debe ser **idéntico** al de ms-usuarios.
+
+`application.properties` no se versiona (está en `.gitignore`).
 
 ## Ejecutar
 
