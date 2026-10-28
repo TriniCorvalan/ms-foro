@@ -2,9 +2,11 @@
 
 Microservicio de **foro** (categorías, temas y comentarios) del Sistema de Foros en Línea (DUOC Full Stack III — Exp 1 Semana 2).
 
+Depende de **[ms-usuarios](https://github.com/TriniCorvalan/ms-usuarios)** para el login y la emisión del JWT (mismo `jwt.secret`).
+
 - Puerto: **8082**
-- Stack: Spring Boot 4, Spring Data JPA, Spring Security (valida JWT emitido por `ms-usuarios`), Oracle Cloud
-- Mismo `jwt.secret` que `ms-usuarios`
+- Stack: Spring Boot 4, Spring Data JPA, Spring Security (valida JWT emitido por ms-usuarios), Oracle Cloud
+- Referencia auth: [ms-usuarios](https://github.com/TriniCorvalan/ms-usuarios) (`POST /auth/login`)
 
 ## Endpoints
 
@@ -23,7 +25,7 @@ Microservicio de **foro** (categorías, temas y comentarios) del Sistema de Foro
 
 ## Configuración
 
-Usa el mismo schema Oracle `FORO_APP` y el mismo wallet que `ms-usuarios`.
+Usa el mismo schema Oracle `FORO_APP` y el mismo wallet que [ms-usuarios](https://github.com/TriniCorvalan/ms-usuarios).
 
 ```bash
 cp src/main/resources/application.properties.example src/main/resources/application.properties
@@ -31,10 +33,9 @@ cp src/main/resources/application.properties.example src/main/resources/applicat
 
 ## Ejecutar
 
-Primero obtén un token en `ms-usuarios` (`POST /auth/login`), luego:
+Primero obtén un token en [ms-usuarios](https://github.com/TriniCorvalan/ms-usuarios) (`POST http://localhost:8081/auth/login`), luego:
 
 ```bash
-export JAVA_HOME=$(/usr/libexec/java_home)
 ./mvnw spring-boot:run
 ```
 
