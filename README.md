@@ -15,9 +15,9 @@ Depende de **[ms-usuarios](https://github.com/TriniCorvalan/ms-usuarios)** para 
 | GET | `/categorias` | Público | Listar |
 | GET | `/categorias/{id}` | Público | Detalle |
 | POST/PUT/DELETE | `/categorias` | ADMIN | Gestión |
-| GET | `/temas?categoriaId=&q=` | Público | Listar / buscar |
-| GET | `/temas/{id}` | Público | Ver tema |
-| GET | `/temas/{id}/comentarios` | Público | Comentarios del tema |
+| GET | `/temas?categoriaId=&q=` | Público | Listar / buscar (solo `ACTIVO`) |
+| GET | `/temas/{id}` | Público | Ver tema (`BANEADO` → 404) |
+| GET | `/temas/{id}/comentarios` | Público | Comentarios del tema (solo `ACTIVO`) |
 | POST | `/temas` | Autenticado | Publicar |
 | PUT/DELETE | `/temas/{id}` | Dueño o ADMIN | Editar / eliminar |
 | POST | `/comentarios` | Autenticado | Comentar |
@@ -45,6 +45,8 @@ Primero obtén un token en [ms-usuarios](https://github.com/TriniCorvalan/ms-usu
 ```
 
 Header en Postman: `Authorization: Bearer <token>`
+
+El ban/desban de temas y comentarios lo realiza **ms-moderacion**. Este servicio oculta el contenido `BANEADO` en las lecturas públicas.
 
 ## Tests
 

@@ -14,7 +14,8 @@ public interface TemaRepository extends JpaRepository<Tema, Long> {
 
 	@Query("""
 			SELECT t FROM Tema t
-			WHERE (:categoriaId IS NULL OR t.categoria.id = :categoriaId)
+			WHERE t.estado = 'ACTIVO'
+			AND (:categoriaId IS NULL OR t.categoria.id = :categoriaId)
 			AND (:q IS NULL OR LOWER(t.titulo) LIKE LOWER(CONCAT('%', :q, '%')))
 			""")
 	List<Tema> buscar(@Param("categoriaId") Long categoriaId, @Param("q") String q);

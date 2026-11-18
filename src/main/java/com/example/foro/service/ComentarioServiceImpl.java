@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.foro.model.Comentario;
+import com.example.foro.model.EstadoContenido;
 import com.example.foro.model.Tema;
 import com.example.foro.repository.ComentarioRepository;
 import com.example.foro.repository.TemaRepository;
@@ -22,12 +23,17 @@ public class ComentarioServiceImpl implements ComentarioService {
 
 	@Override
 	public List<Comentario> getByTemaId(Long temaId) {
-		return comentarioRepository.findByTemaId(temaId);
+		return comentarioRepository.findByTemaIdAndEstadoOrderByFechaCreacionAsc(
+				temaId, EstadoContenido.ACTIVO);
 	}
 
 	@Override
 	public Comentario getById(Long id) {
-		return comentarioRepository.findById(id).orElse(null);
+		Comentario comentario = comentarioRepository.findById(id).orElse(null);
+		if (comentario == null || EstadoContenido.BANEADO.equals(comentario.getEstado())) {
+			return null;
+		}
+		return comentario;
 	}
 
 	@Override
@@ -38,11 +44,14 @@ public class ComentarioServiceImpl implements ComentarioService {
 		}
 		Tema tema = temaRepository.findById(temaId)
 				.orElseThrow(() -> new RuntimeException("Tema no encontrado"));
+		if (EstadoContenido.BANEADO.equals(tema.getEstado())) {
+			throw new RuntimeException("No se puede comentar un tema baneado");
+		}
 		Comentario nuevo = new Comentario();
 		nuevo.setContenido(comentario.getContenido());
 		nuevo.setTema(tema);
 		nuevo.setUsuarioId(usuarioId);
-		nuevo.setEstado(comentario.getEstado() != null ? comentario.getEstado() : "ACTIVO");
+		nuevo.setEstado(EstadoContenido.ACTIVO);
 		nuevo.setFechaCreacion(LocalDateTime.now());
 		return comentarioRepository.save(nuevo);
 	}
@@ -51,15 +60,16 @@ public class ComentarioServiceImpl implements ComentarioService {
 	public Comentario update(Long id, Comentario cambios, Long usuarioId, boolean esAdmin) {
 		Comentario existing = comentarioRepository.findById(id)
 				.orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
+		if (EstadoContenido.BANEADO.equals(existing.getEstado())) {
+			throw new RuntimeException("Comentario no encontrado");
+		}
 		if (!esAdmin && !existing.getUsuarioId().equals(usuarioId)) {
 			throw new SecurityException("No autorizado para modificar este comentario");
 		}
 		if (cambios.getContenido() != null) {
 			existing.setContenido(cambios.getContenido());
 		}
-		if (cambios.getEstado() != null) {
-			existing.setEstado(cambios.getEstado());
-		}
+		// El ban/desban se gestiona en ms-moderacion; aquí no se cambia ESTADO.
 		return comentarioRepository.save(existing);
 	}
 
@@ -67,6 +77,9 @@ public class ComentarioServiceImpl implements ComentarioService {
 	public void delete(Long id, Long usuarioId, boolean esAdmin) {
 		Comentario existing = comentarioRepository.findById(id)
 				.orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
+		if (EstadoContenido.BANEADO.equals(existing.getEstado()) && !esAdmin) {
+			throw new RuntimeException("Comentario no encontrado");
+		}
 		if (!esAdmin && !existing.getUsuarioId().equals(usuarioId)) {
 			throw new SecurityException("No autorizado para eliminar este comentario");
 		}

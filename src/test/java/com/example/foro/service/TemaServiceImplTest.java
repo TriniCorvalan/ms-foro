@@ -65,6 +65,13 @@ class TemaServiceImplTest {
 	}
 
 	@Test
+	void getByIdWhenBaneadoReturnsNull() {
+		tema.setEstado("BANEADO");
+		when(temaRepository.findById(1L)).thenReturn(Optional.of(tema));
+		assertEquals(null, service.getById(1L));
+	}
+
+	@Test
 	void createPersistsWithUsuarioId() {
 		Tema request = new Tema();
 		request.setTitulo("Nuevo");
