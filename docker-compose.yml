@@ -1,0 +1,13 @@
+services:
+  ms-foro:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    env_file: .env
+    environment:
+      TNS_ADMIN: /app/wallet
+    volumes:
+      - ${ORACLE_WALLET_DIR:-../library/Wallet_TG243BR3UDTANBR0}:/app/wallet:ro
+    restart: unless-stopped
